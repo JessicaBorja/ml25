@@ -49,7 +49,7 @@ if __name__ == "__main__":
     # 3. ejecuta el script para ver el comportamiento del agente
     # 4. Implementa una técnica para reducir la exploración conforme el agente aprende
     # https://gymnasium.farama.org/environments/toy_text/cliff_walking/
-    env = gym.make("CliffWalking-v0", render_mode="human")
+    env = gym.make("CliffWalking-v1", render_mode="human")
 
     n_episodes = 1000
     episode_length = 200
