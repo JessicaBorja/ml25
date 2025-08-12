@@ -1,7 +1,6 @@
 import gymnasium as gym
 import numpy as np
 
-
 class RandomAgent:
     def __init__(self, env, alpha=0.1, gamma=0.9, epsilon=0.1):
         self.env = env
@@ -38,8 +37,8 @@ class QLearningAgent(RandomAgent):
     def step(self, state, action, reward, next_state):
         best_next_action = np.argmax(self.Q[next_state])
         # TODO: Implementa la actualización de Q-learning usando la ecuación vista en clase
-        self.Q[state][action] = ...
-
+        #? creo que ya quedo la ecuacion, segun los argumentos dados del codigo y vistos en clase
+        self.Q[state][action] = self.Q[state][action] + self.alpha*(reward + self.gamma * np.argmax(self.Q[next_state])-self.Q[state][action])
 
 if __name__ == "__main__":
     # TODO:
