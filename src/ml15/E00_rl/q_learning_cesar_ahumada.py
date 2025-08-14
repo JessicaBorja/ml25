@@ -36,6 +36,8 @@ class QLearningAgent(RandomAgent):
     def step(self, state, action, reward, next_state):
         best_next_action = np.argmax(self.Q[next_state])
         # TODO: Implementa la actualización de Q-learning usando la ecuación vista en clase
+        #? creo que ya quedo la ecuacion, segun los argumentos dados del codigo y vistos en clase
+        self.Q[state][action] = self.Q[state][action] + self.alpha*(reward + self.gamma * np.argmax(self.Q[next_state])-self.Q[state][action])
 
 if __name__ == "__main__":
     # TODO:
@@ -45,6 +47,7 @@ if __name__ == "__main__":
     # 3. ejecuta el script para ver el comportamiento del agente
     # 4. Implementa una técnica para reducir la exploración conforme el agente aprende
     # https://gymnasium.farama.org/environments/toy_text/cliff_walking/
+    
     env = gym.make("CliffWalking-v1", render_mode="human")
 
     n_episodes = 1000
