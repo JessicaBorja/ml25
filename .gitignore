@@ -214,3 +214,4 @@ __marimo__/
 *.pth
 */models/*.pt
 */data/
+pycache/
