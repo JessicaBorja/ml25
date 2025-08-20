@@ -23,7 +23,7 @@ class RandomAgent:
 
 
 class QLearningAgent(RandomAgent):
-    def __init__(self, env, alpha=0.1, gamma=0.9, epsilon=0.1):
+    def __init__(self, env, alpha=0.8, gamma=0.5, epsilon=0.99):
         super().__init__(env, alpha, gamma, epsilon)
 
     def act(self, observation):
@@ -48,9 +48,9 @@ if __name__ == "__main__":
     # https://gymnasium.farama.org/environments/toy_text/cliff_walking/
     env = gym.make("CliffWalking-v1", render_mode="human")
 
-    n_episodes = 1000
+    n_episodes = 2000
     episode_length = 200
-    agent = QlearningAgent(env, alpha=0.5, gamma=0.99, epsilon=.9)
+    agent = QLearningAgent(env, alpha=0.8, gamma=0.5, epsilon=.99)
     for e in range(n_episodes):
         obs, _ = env.reset()
         ep_return = 0
@@ -66,10 +66,10 @@ if __name__ == "__main__":
             ep_return += reward
             obs = next_obs
             print(agent.Q)
-            env.render()
+            if e%100==0:
+                env.render()
         # TODO: Implementa algun código para reducir la exploración del agente conforme aprende
         # puedes decidir hacerlo por episodio, por paso del tiempo, retorno promedio, etc.
-        agent.epsilon=
-
+        agent.epsilon= max(0.07, agent.epsilon * 0.995)
         print(f"Episode {e} return: ", ep_return)
     env.close()
