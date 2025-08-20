@@ -69,16 +69,13 @@ if __name__ == "__main__":
             # update agent
             agent.step(obs, action, reward, next_obs)
 
-            if render:
-                env.render()
-
             if done:
                 break
 
             ep_return += reward
             obs = next_obs
             print(agent.Q)
-
+            env.render()
         # TODO: Implementa algun código para reducir la exploración del agente conforme aprende
         # puedes decidir hacerlo por episodio, por paso del tiempo, retorno promedio, etc.
 
