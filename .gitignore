@@ -213,5 +213,4 @@ __marimo__/
 *.csv
 *.pth
 */models/*.pt
-*/data/
 __pycache_/
