@@ -212,4 +212,3 @@ __marimo__/
 /.vscode
 *.pth
 */models/*.pt
-__pycache_/
