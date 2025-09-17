@@ -29,48 +29,51 @@ class QLearningAgent(RandomAgent):
 
     def act(self, observation):
         if np.random.random() < self.epsilon:
-            return env.action_space.sample()  # Exploration
+            return self.action_space.sample()  # Exploration
         else:
             return np.argmax(self.Q[observation])  # Exploitation
 
     # Update Q values using Q-learning
     def step(self, state, action, reward, next_state):
         best_next_action = np.argmax(self.Q[next_state])
-        # TODO: Implementa la actualización de Q-learning usando la ecuación vista en clase
-        self.Q[state] [action] = ...
+        # Implementa la actualización de Q-learning
+        self.Q[state][action] = self.Q[state][action] + self.alpha * (
+            reward + self.gamma * self.Q[next_state][best_next_action] - self.Q[state][action]
+        )
 
 
 if __name__ == "__main__":
-    # TODO:
-    # Este ejercicio cuenta como 5 pts extra en el primer examen parcial
-    # 1. completa el código para implementar q learning,
-    # 2. modifica los hiperparámetros para que el agente aprenda
-    # 3. ejecuta el script para ver el comportamiento del agente
-    # 4. Implementa una técnica para reducir la exploración conforme el agente aprende
-    # https://gymnasium.farama.org/environments/toy_text/cliff_walking/
     env = gym.make("CliffWalking-v1", render_mode="human")
 
     n_episodes = 1000
     episode_length = 200
-    agent = RandomAgent(env, alpha=0.1, gamma=0.9, epsilon=0.9)
+    
+    # Cambié a QLearningAgent (era RandomAgent en el original)
+    agent = QLearningAgent(env, alpha=0.1, gamma=0.9, epsilon=0.1)
+    
     for e in range(n_episodes):
         obs, _ = env.reset()
         ep_return = 0
+        
         for i in range(episode_length):
-            # take a random action
+            # take action (ahora usa Q-learning, no random)
             action = agent.act(obs)
-            next_obs, reward, done, _, _ = env.step(action)
-            # update agent
+            next_obs, reward, done, truncated, _ = env.step(action)
+            
+            # update agent (ahora sí aprende)
             agent.step(obs, action, reward, next_obs)
 
-            if done:
+            if done or truncated:
                 break
+                
             ep_return += reward
             obs = next_obs
-            print(agent.Q)
+            
             env.render()
-        # TODO: Implementa algun código para reducir la exploración del agente conforme aprende
-        # puedes decidir hacerlo por episodio, por paso del tiempo, retorno promedio, etc.
+        
+        # Reducción simple de exploración (como pedía el TODO)
+        agent.epsilon = 0.1 / (1 + e * 0.01)  # Se reduce con cada episodio
 
-        print(f"Episode {e} return: ", ep_return)
+        print(f"Episode {e} return: {ep_return}, Epsilon: {agent.epsilon:.3f}")
+    
     env.close()
