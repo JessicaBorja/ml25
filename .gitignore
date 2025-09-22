@@ -212,3 +212,6 @@ __marimo__/
 /.vscode
 *.pth
 */models/*.pt
+src/ml25/P01_customer_purchases/test_results/
+src/ml25/P01_customer_purchases/logs/
+src/ml25/P01_customer_purchases/trained_models/
