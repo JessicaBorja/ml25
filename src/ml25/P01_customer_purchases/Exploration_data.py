@@ -1,3 +1,5 @@
+#Hice copia del documento para poder hacer mis propias graficas sin arruinar el otro :)
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -16,7 +18,6 @@ def read_csv(filename: str):
     df = pd.read_csv(fullfilename)
     return df
 
-
 if __name__ == "__main__":
     train_df = read_csv("customer_purchases_train")
     print(train_df.info())
@@ -31,19 +32,30 @@ if __name__ == "__main__":
             plt.title(f"Distribution of {col}")
             plt.show()
     categorical_cols = ["customer_gender", "item_id", "item_category", "item_img_filename", "item_release_date", "purchase_timestamp"]
-    for col in categorical_cols:
-        if col in train_df.columns:
-            plt.figure(figsize=(6,4))
-            sns.countplot(y=train_df[col], order=train_df[col].value_counts().index)
-            plt.title(f"Counts of {col}")
-            plt.show()
-    train_df["item_release_date_seconds"] = pd.to_datetime(train_df["item_release_date"], format="%Y-%m-%d")
-    train_df["item_release_date_seconds"] = train_df["item_release_date_seconds"].astype("int64") // 10**9
-    train_df["purchase_timestamp_seconds"] = pd.to_datetime(train_df["purchase_timestamp"], format="%Y-%m-%d")
-    train_df["purchase_timestamp_seconds"] = train_df["purchase_timestamp_seconds"].astype("int64") // 10**9
-    train_df["time_between_purchase_h"] = (train_df["purchase_timestamp_seconds"]-train_df["item_release_date_seconds"])/3600
-    plt.figure(figsize=(6,4))
-    sns.histplot(train_df["time_between_purchase_h"], bins=50)
-    plt.title(f"Distribution of time between purchase h")
-    plt.show()
+
+plt.figure(figsize=(10,6))
+sns.countplot(
+    x="item_category",
+    hue="customer_gender",
+    data=train_df,
+    order=train_df["item_category"].value_counts().index
+)
+plt.title("Distribution of Gender by Item Category")
+plt.xticks(rotation=45)
+plt.show()
+
+plt.figure(figsize=(12,6))
+sns.countplot(
+    y="item_img_filename",       # filas con colores
+    hue="customer_gender",       # separa por género
+    data=train_df,
+    order=train_df["item_img_filename"].value_counts().index,
+    palette={"male" : "green", "female": "purple"}
+)
+
+plt.title("Distribution of Gender by Clothing Color")
+plt.xlabel("Count")
+plt.ylabel("Clothing Color")
+plt.legend(title="Gender")
+plt.show()
 
