@@ -1,6 +1,17 @@
 import numpy as np
 import pandas as pd
+import os
+from pathlib import Path
 
+CURRENT_FILE = Path(__file__).resolve()
+DATA_DIR = CURRENT_FILE / "../../../datasets/customer_purchases/"
+
+
+def read_csv(filename: str):
+    file = os.path.join(DATA_DIR, f"{filename}.csv")
+    fullfilename = os.path.abspath(file)
+    df = pd.read_csv(fullfilename)
+    return df
 
 def gen_random_negatives(train_df, n_per_positive=2, random_state=42):
     rng = np.random.default_rng(random_state)
@@ -55,3 +66,9 @@ def gen_all_negatives(df):
 
 def gen_smart_negatives(df):
     pass
+
+if __name__ == "__main__":
+    train_df = read_csv("customer_purchases_train")
+    print(train_df.info())
+    test_df = read_csv("customer_purchases_test")
+    print(test_df.columns)
