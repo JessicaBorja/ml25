@@ -30,9 +30,19 @@ if __name__ == "__main__":
             sns.histplot(train_df[col], bins=50)
             plt.title(f"Distribution of {col}")
             plt.show()
-    categorical_cols = train_df.select_dtypes(include=["object", "category"]).columns
+    categorical_cols = ["customer_gender", "item_id", "item_category", "item_img_filename", "item_release_date", "purchase_timestamp"]
     for col in categorical_cols:
-        plt.figure(figsize=(6,4))
-        sns.countplot(y=train_df[col], order=train_df[col].value_counts().index)
-        plt.title(f"Counts of {col}")
-        plt.show()
+        if col in train_df.columns:
+            plt.figure(figsize=(6,4))
+            sns.countplot(y=train_df[col], order=train_df[col].value_counts().index)
+            plt.title(f"Counts of {col}")
+            plt.show()
+    train_df["item_release_date_seconds"] = pd.to_datetime(train_df["item_release_date"], format="%Y-%m-%d")
+    train_df["item_release_date_seconds"] = train_df["item_release_date_seconds"].astype("int64") // 10**9
+    train_df["purchase_timestamp_seconds"] = pd.to_datetime(train_df["purchase_timestamp"], format="%Y-%m-%d")
+    train_df["purchase_timestamp_seconds"] = train_df["purchase_timestamp_seconds"].astype("int64") // 10**9
+    train_df["time_between_purchase_h"] = (train_df["purchase_timestamp_seconds"]-train_df["item_release_date_seconds"])/3600
+    plt.figure(figsize=(6,4))
+    sns.histplot(train_df["time_between_purchase_h"], bins=50)
+    plt.title(f"Distribution of time between purchase h")
+    plt.show()
