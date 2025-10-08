@@ -62,26 +62,54 @@ plt.legend(title="Gender")
 plt.show()
 
 #Estaciones de mayor compra en el año
-#Datos basados en fechas
 
-#hacer formato datetime
-train_df['purchase_timestamp']= pd.to_datetime(train_df['purchase_timestamp'])
-train_df['item_release_date']= pd.to_datetime(train_df['item_release_date'])
+# Hacer formato datetime
+train_df['purchase_timestamp'] = pd.to_datetime(train_df['purchase_timestamp'])
+train_df['item_release_date'] = pd.to_datetime(train_df['item_release_date'])
 
-#datos que quiero: mes y día de la semana
-train_df['purchase_month'] = train_df['purchase_timestamp'].dt.month
+# Datos que quiero: mes y día de la semana
+train_df['purchase_by_month'] = train_df['purchase_timestamp'].dt.month
 train_df['purchase_dayofweek'] = train_df['purchase_timestamp'].dt.dayofweek
 
-#purchase_by_month
+# Compras por mes
 
-plt.figure(figsize(12,6))
-sns.countplot(x='purchase_by_month', data=train_df)
+plt.figure(figsize=(12,6))
+sns.countplot(
+    x='purchase_by_month',
+    data=train_df,
+    order=sorted(train_df['purchase_by_month'].unique())
+)
 plt.title("Compras por mes")
+plt.xlabel("Mes (1 = Enero, 12 = Diciembre)")
+plt.ylabel("Número de compras")
 plt.show()
 
-#purchase_by_weekday
-#en esta grafica el valor de 0 es lunes.
-plt.figure(figsize(12,6))
-sns.countplot(x='purchase_dayofweek', data=train_df)
-plt.title("Compras por dia de la semana")
+#  Compras por día de la semana
+
+plt.figure(figsize=(12,6))
+sns.countplot(
+    x='purchase_dayofweek',
+    data=train_df,
+    order=sorted(train_df['purchase_dayofweek'].unique())
+)
+plt.title("Compras por día de la semana (0 = Lunes)")
+plt.xlabel("Día de la semana")
+plt.ylabel("Número de compras")
 plt.show()
+
+#  Diferencia entre lanzamiento y compra (tiempo hasta la compra)
+
+train_df['days_to_buy_after_release'] = (
+    train_df['purchase_timestamp'] - train_df['item_release_date']
+).dt.days
+
+plt.figure(figsize=(10,5))
+sns.histplot(train_df['days_to_buy_after_release'], bins=50)
+plt.title("Días entre lanzamiento y compra")
+plt.xlabel("Días desde el lanzamiento")
+plt.ylabel("Número de compras")
+plt.show()
+
+# Porcentaje de 'early adopters' (compras dentro de 30 días)
+early_buyers = (train_df['days_to_buy_after_release'] <= 30).mean()
+print(f"Porcentaje de compras dentro de los primeros 30 días del lanzamiento: {early_buyers*100:.2f}%")
