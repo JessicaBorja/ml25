@@ -33,6 +33,7 @@ if __name__ == "__main__":
             plt.show()
     categorical_cols = ["customer_gender", "item_id", "item_category", "item_img_filename", "item_release_date", "purchase_timestamp"]
 
+#relación genero-producto
 plt.figure(figsize=(10,6))
 sns.countplot(
     x="item_category",
@@ -44,6 +45,7 @@ plt.title("Distribution of Gender by Item Category")
 plt.xticks(rotation=45)
 plt.show()
 
+#Relación genero-color
 plt.figure(figsize=(12,6))
 sns.countplot(
     y="item_img_filename",       # filas con colores
@@ -59,3 +61,27 @@ plt.ylabel("Clothing Color")
 plt.legend(title="Gender")
 plt.show()
 
+#Estaciones de mayor compra en el año
+#Datos basados en fechas
+
+#hacer formato datetime
+train_df['purchase_timestamp']= pd.to_datetime(train_df['purchase_timestamp'])
+train_df['item_release_date']= pd.to_datetime(train_df['item_release_date'])
+
+#datos que quiero: mes y día de la semana
+train_df['purchase_month'] = train_df['purchase_timestamp'].dt.month
+train_df['purchase_dayofweek'] = train_df['purchase_timestamp'].dt.dayofweek
+
+#purchase_by_month
+
+plt.figure(figsize(12,6))
+sns.countplot(x='purchase_by_month', data=train_df)
+plt.title("Compras por mes")
+plt.show()
+
+#purchase_by_weekday
+#en esta grafica el valor de 0 es lunes.
+plt.figure(figsize(12,6))
+sns.countplot(x='purchase_dayofweek', data=train_df)
+plt.title("Compras por dia de la semana")
+plt.show()
