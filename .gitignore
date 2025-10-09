@@ -223,4 +223,3 @@ __marimo__/
 *.tar.gz
 **/datasets
 uv.lock
-evil_data_processing.py
