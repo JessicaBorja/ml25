@@ -68,7 +68,7 @@ def build_preprocessor(num_cols: list[str], cat_cols: list[str]) -> ColumnTransf
     ])
     cat_pipe = Pipeline(steps=[
         ("imputer", SimpleImputer(strategy="most_frequent")),
-        ("ohe", OneHotEncoder(handle_unknown="ignore", sparse=False)),
+        ("ohe", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
     ])
     pre = ColumnTransformer(
         transformers=[
