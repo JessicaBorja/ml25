@@ -1,66 +1,48 @@
-import pandas as pd
-import os
-import joblib
+from ml25.P01_customer_purchases.boilerplate.evil_data_processing import read_test_data
 from pathlib import Path
-import matplotlib.pyplot as plt
-from ml25.P01_customer_purchases.boilerplate.data_processing import read_test_data
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from sklearn.metrics import roc_curve, auc
-import numpy as np
-
+import joblib
+import pandas as pd
+import matplotlib_inline as plt
 
 CURRENT_FILE = Path(__file__).resolve()
-
 RESULTS_DIR = CURRENT_FILE.parent / "test_results"
 RESULTS_DIR.mkdir(exist_ok=True, parents=True)
-
 MODELS_DIR = CURRENT_FILE.parent / "trained_models"
 
 
-def load(self, filename: str):
-    """
-    Load the model from MODELS_DIR/filename
-    """
-    filepath = Path(MODELS_DIR) / filename
-    model = joblib.load(filepath)
-    print(f"{self.__repr__} || Model loaded from {filepath}")
-    return model
-
-
-def run_inference(model_name: str, X):
-    """
-    Obtener las predicciones del modelo guardado en model_path para los datos de data_path.
-    En su caso, utilicen este archivo para calcular las predicciones de data_test y subir sus resultados a la competencia de kaggle.
-    """
+def run_inference(model_name: str, X: pd.DataFrame) -> pd.DataFrame:
     full_path = MODELS_DIR / model_name
     print(f"Loading model from {full_path}")
-    # Cargar el modelo
     model = joblib.load(full_path)
 
-    # Realizar la inferencia
     preds = model.predict(X)
-    probs = ...
+    probs = model.predict_proba(X)[:, 1]
 
     results = pd.DataFrame(
-        {"index": X.index, "prediction": preds, "probability": probs}  # índice original
+        {"ID": X.index, "pred": preds, "prob": probs}
     )
     return results
 
-
-def plot_roc(y_true, y_proba):
-    pass
-
+def plot_roc(y_true, y_proba, title="ROC Curve"):
+    fpr, tpr, _ = roc_curve(y_true, y_proba)
+    roc_auc = auc(fpr, tpr)
+    plt.figure(figsize=(6, 5))
+    plt.plot(fpr, tpr, label=f"AUC = {roc_auc:.3f}")
+    plt.plot([0, 1], [0, 1], linestyle="--")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title(title)
+    plt.legend(loc="lower right")
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == "__main__":
     X = read_test_data()
-    # model_name = "somemodelname.pkl"
-    # model = load(model_name)
-    # preds = model.predict(X)
+    model_name = "logreg_baseline_20251013_164514.pkl"
+    model = joblib.load(MODELS_DIR / model_name)
+    preds = model.predict(X)
+    probs = model.predict_proba(X)[:, 1]
 
-    # Guardar las preddiciones
-    preds = np.random.choice([0, 1], size=(len(X)))
-    filename = "random_predictions.csv"
-    basepath = RESULTS_DIR / filename
-    results = pd.DataFrame({"ID": X.index, "pred": preds})  # índice original
-    results.to_csv(basepath, index=False)
-    print(f"Saved predictions to {basepath}")
+    out = pd.DataFrame({"ID": X.index, "pred": preds, "prob": probs})
+    out.to_csv(RESULTS_DIR / "predictions.csv", index=False)
+    print(f"Saved {len(out)} predictions to {RESULTS_DIR / 'predictions.csv'}")
